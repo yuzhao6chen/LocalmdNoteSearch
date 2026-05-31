@@ -77,8 +77,7 @@ impl<'a> SearchEngine<'a> {
         query: &Query,
         accumulated: AccumulatedScore,
     ) -> SearchResult {
-        let mut matched_terms = accumulated.matched_terms.into_iter().collect::<Vec<_>>();
-        matched_terms.sort();
+        let matched_terms = display_matched_terms(document, query, accumulated.matched_terms);
 
         let mut score = accumulated.score;
         score += coverage_bonus(query.terms.len(), matched_terms.len());
@@ -211,6 +210,39 @@ fn section_score(section: &Section, terms: &[String]) -> f64 {
             heading_hits * 4.0 + body_hits
         })
         .sum()
+}
+
+fn display_matched_terms(
+    document: &Document,
+    query: &Query,
+    indexed_matches: HashSet<String>,
+) -> Vec<String> {
+    let haystack = searchable_text(document).to_lowercase();
+    let mut terms = query
+        .keywords
+        .iter()
+        .filter(|keyword| haystack.contains(&keyword.to_lowercase()))
+        .cloned()
+        .collect::<Vec<_>>();
+
+    if terms.is_empty() {
+        terms = indexed_matches.into_iter().collect();
+    }
+
+    terms.sort();
+    terms.dedup();
+    terms
+}
+
+fn searchable_text(document: &Document) -> String {
+    format!(
+        "{} {} {} {} {}",
+        document.title,
+        document.file_name,
+        document.tags.join(" "),
+        document.headings.join(" "),
+        document.body
+    )
 }
 
 #[cfg(test)]

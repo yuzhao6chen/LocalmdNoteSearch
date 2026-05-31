@@ -1,5 +1,6 @@
 mod cli;
 mod output;
+mod tui;
 
 use std::env;
 use std::path::Path;
@@ -31,6 +32,7 @@ pub fn run() -> AppResult<()> {
             let results = engine.search(&query, limit);
             output::print_results(&results, format)
         }
+        Command::Tui { dir, limit } => tui::run(&dir, &options.cache, limit),
         Command::Help => {
             output::print_help();
             Ok(())

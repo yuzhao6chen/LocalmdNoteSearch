@@ -45,18 +45,43 @@ pub struct InvertedIndex {
 impl InvertedIndex {
     pub fn build(documents: Vec<Document>) -> Self {
         let tokenizer = SimpleTokenizer;
-        let mut index = Self {
-            documents,
-            postings: HashMap::new(),
-        };
+        let mut postings = HashMap::new();
 
-        for doc_id in 0..index.documents.len() {
-            for (field, text) in index.field_texts(doc_id) {
-                index.add_text(doc_id, field, &text, &tokenizer);
+        for (doc_id, document) in documents.iter().enumerate() {
+            add_text(
+                &mut postings,
+                doc_id,
+                Field::Title,
+                &document.title,
+                &tokenizer,
+            );
+            add_text(
+                &mut postings,
+                doc_id,
+                Field::FileName,
+                &document.file_name,
+                &tokenizer,
+            );
+            add_text(
+                &mut postings,
+                doc_id,
+                Field::Body,
+                &document.body,
+                &tokenizer,
+            );
+
+            for tag in &document.tags {
+                add_text(&mut postings, doc_id, Field::Tag, tag, &tokenizer);
+            }
+            for heading in &document.headings {
+                add_text(&mut postings, doc_id, Field::Heading, heading, &tokenizer);
             }
         }
 
-        index
+        Self {
+            documents,
+            postings,
+        }
     }
 
     pub fn postings_for(&self, term: &str) -> Option<&HashMap<usize, TermStats>> {
@@ -73,33 +98,22 @@ impl InvertedIndex {
             .map(std::collections::HashMap::len)
             .unwrap_or(0)
     }
+}
 
-    fn add_text<T: Tokenizer>(&mut self, doc_id: usize, field: Field, text: &str, tokenizer: &T) {
-        for token in tokenizer.tokenize(text) {
-            self.postings
-                .entry(token)
-                .or_default()
-                .entry(doc_id)
-                .or_default()
-                .add(field);
-        }
-    }
-
-    fn field_texts(&self, doc_id: usize) -> Vec<(Field, String)> {
-        let document = &self.documents[doc_id];
-        let mut texts = Vec::new();
-        texts.push((Field::Title, document.title.clone()));
-        texts.push((Field::FileName, document.file_name.clone()));
-        texts.push((Field::Body, document.body.clone()));
-
-        for tag in &document.tags {
-            texts.push((Field::Tag, tag.clone()));
-        }
-        for heading in &document.headings {
-            texts.push((Field::Heading, heading.clone()));
-        }
-
-        texts
+fn add_text<T: Tokenizer>(
+    postings: &mut HashMap<String, HashMap<usize, TermStats>>,
+    doc_id: usize,
+    field: Field,
+    text: &str,
+    tokenizer: &T,
+) {
+    for token in tokenizer.tokenize(text) {
+        postings
+            .entry(token)
+            .or_default()
+            .entry(doc_id)
+            .or_default()
+            .add(field);
     }
 }
 

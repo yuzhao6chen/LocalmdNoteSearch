@@ -50,14 +50,17 @@ pub fn print_help() {
            md-knowsearch index <directory> [--cache <file>]\n\
            md-knowsearch rebuild <directory> [--cache <file>]\n\
            md-knowsearch search <keywords...> [--cache <file>] [--dir <directory>] [--rebuild] [--limit <n>] [--format text|json]\n\
+           md-knowsearch tui <directory> [--cache <file>] [--limit <n>]\n\
          \n\
          Notes:\n\
            search with --dir scans that directory and refreshes the cache before querying.\n\
+           tui opens a lightweight interactive terminal search interface.\n\
          \n\
          Examples:\n\
            cargo run -- index notes\n\
            cargo run -- search rust ownership borrowing\n\
-           cargo run -- search \"error handling\" --dir notes --json\n"
+           cargo run -- search \"error handling\" --dir notes --json\n\
+           cargo run -- tui notes\n"
     );
 }
 

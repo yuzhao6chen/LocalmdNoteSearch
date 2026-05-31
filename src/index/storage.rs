@@ -68,7 +68,7 @@ pub fn load_cache(cache_path: &Path) -> AppResult<Vec<Document>> {
         if line.trim().is_empty() {
             continue;
         }
-        let value = JsonParser::new(&line).parse_value()?;
+        let value = JsonParser::new(&line).parse_complete()?;
         let JsonValue::Object(object) = value else {
             return Err(AppError::Cache(format!(
                 "cache line {} is not a JSON object",
@@ -305,6 +305,18 @@ impl<'a> JsonParser<'a> {
         }
     }
 
+    fn parse_complete(&mut self) -> AppResult<JsonValue> {
+        let value = self.parse_value()?;
+        self.skip_whitespace();
+        if self.peek().is_some() {
+            return Err(AppError::Cache(format!(
+                "unexpected trailing JSON at {}",
+                self.position
+            )));
+        }
+        Ok(value)
+    }
+
     fn parse_object(&mut self) -> AppResult<BTreeMap<String, JsonValue>> {
         self.expect_byte(b'{')?;
         let mut object = BTreeMap::new();
@@ -474,8 +486,15 @@ mod tests {
     #[test]
     fn parses_generated_json_string() {
         let mut parser = JsonParser::new("{\"title\":\"Rust\\nSearch\",\"n\":2}");
-        let value = parser.parse_value();
+        let value = parser.parse_complete();
         assert!(matches!(value, Ok(JsonValue::Object(_))));
+    }
+
+    #[test]
+    fn rejects_trailing_json_data() {
+        let mut parser = JsonParser::new("{\"title\":\"Rust\"} trailing");
+        let value = parser.parse_complete();
+        assert!(value.is_err());
     }
 
     #[test]

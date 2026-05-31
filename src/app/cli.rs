@@ -25,6 +25,10 @@ pub enum Command {
         format: OutputFormat,
         rebuild: bool,
     },
+    Tui {
+        dir: PathBuf,
+        limit: usize,
+    },
     Help,
 }
 
@@ -118,6 +122,39 @@ impl Options {
                     format,
                     rebuild,
                 }
+            }
+            "tui" | "interactive" => {
+                let dir = take_required_path(&mut args, "directory")?;
+                let mut limit = 8usize;
+                let mut index = 0usize;
+
+                while index < args.len() {
+                    match args[index].as_str() {
+                        "--cache" => {
+                            index += 1;
+                            cache = parse_path_arg(args.get(index), "--cache")?;
+                        }
+                        "--limit" => {
+                            index += 1;
+                            limit = parse_limit(args.get(index))?;
+                        }
+                        "--help" | "-h" => {
+                            return Ok(Self {
+                                command: Command::Help,
+                                cache,
+                            });
+                        }
+                        value if value.starts_with('-') => {
+                            return Err(AppError::Cli(format!("unknown option `{value}`")));
+                        }
+                        value => {
+                            return Err(AppError::Cli(format!("unexpected argument `{value}`")));
+                        }
+                    }
+                    index += 1;
+                }
+
+                Command::Tui { dir, limit }
             }
             "help" | "--help" | "-h" => Command::Help,
             other => {
