@@ -32,6 +32,7 @@ pub fn highlight_with_marks(text: &str, terms: &[String]) -> String {
     highlight(text, terms, "<mark>", "</mark>")
 }
 
+// 高亮时优先匹配长词，避免中文短语被拆碎。
 fn highlight(text: &str, terms: &[String], open: &str, close: &str) -> String {
     let terms = normalized_terms(terms);
     if terms.is_empty() {

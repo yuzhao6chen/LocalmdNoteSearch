@@ -7,6 +7,7 @@ use crate::index::storage;
 use crate::ingest::scan_documents;
 use crate::search::{SearchEngine, SearchResult};
 
+// 简单的终端交互循环，输入一行就搜索一次。
 pub fn run(dir: &Path, cache: &Path, limit: usize) -> AppResult<()> {
     let mut index = build_index(dir, cache)?;
     draw_home(dir, cache, limit, index.document_count())?;
@@ -54,6 +55,7 @@ pub fn run(dir: &Path, cache: &Path, limit: usize) -> AppResult<()> {
     Ok(())
 }
 
+// 启动和 :rebuild 都走这里，避免两套索引逻辑。
 fn build_index(dir: &Path, cache: &Path) -> AppResult<InvertedIndex> {
     let documents = scan_documents(dir)?;
     storage::save_cache(cache, dir, &documents)?;

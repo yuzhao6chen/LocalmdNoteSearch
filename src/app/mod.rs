@@ -40,6 +40,7 @@ pub fn run() -> AppResult<()> {
     }
 }
 
+// index 和 rebuild 都是同一件事：扫描目录后写入缓存。
 fn build_and_save(dir: &Path, cache: &Path) -> AppResult<()> {
     let documents = scan_documents(dir)?;
     storage::save_cache(cache, dir, &documents)?;
@@ -51,6 +52,7 @@ fn build_and_save(dir: &Path, cache: &Path) -> AppResult<()> {
     Ok(())
 }
 
+// search 可以直接读缓存，也可以先扫描目录刷新缓存。
 fn load_documents_for_search(
     dir: Option<&Path>,
     cache: &Path,

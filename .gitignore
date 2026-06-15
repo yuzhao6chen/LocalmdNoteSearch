@@ -1,2 +1,10 @@
 /target
 .md-knowsearch-cache.jsonl
+
+# Local report/demo artifacts
+*.docx
+*.png
+*.mp4
+report_assets/
+tools/
+__pycache__/

@@ -43,6 +43,7 @@ pub struct InvertedIndex {
 }
 
 impl InvertedIndex {
+    // 构建倒排索引：词 -> 文档 -> 各字段命中次数。
     pub fn build(documents: Vec<Document>) -> Self {
         let tokenizer = SimpleTokenizer;
         let mut postings = HashMap::new();
@@ -100,6 +101,7 @@ impl InvertedIndex {
     }
 }
 
+// 将一个字段的文本加入 postings，并记录字段类型。
 fn add_text<T: Tokenizer>(
     postings: &mut HashMap<String, HashMap<usize, TermStats>>,
     doc_id: usize,

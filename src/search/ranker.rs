@@ -31,6 +31,7 @@ impl<'a> SearchEngine<'a> {
         Self { index }
     }
 
+    // 搜索流程：取候选文档、打分、排序、截断。
     pub fn search(&self, query_parts: &[String], limit: usize) -> Vec<SearchResult> {
         let query = Query::new(query_parts);
         if query.terms.is_empty() {
@@ -116,6 +117,7 @@ struct AccumulatedScore {
     matched_terms: HashSet<String>,
 }
 
+// 单个词的基础分数，合并字段权重和 IDF。
 fn score_term(stats: TermStats, idf: f64) -> f64 {
     let weighted = stats.weighted_frequency();
     if weighted <= 0.0 {
@@ -142,6 +144,7 @@ fn coverage_bonus(total_terms: usize, matched_terms: usize) -> f64 {
     ratio * 4.0 + all_terms_bonus
 }
 
+// 完整短语直接出现时，额外加一点分。
 fn phrase_bonus(document: &Document, raw_query: &str) -> f64 {
     let phrase = raw_query.trim().to_lowercase();
     if phrase.is_empty() || phrase.split_whitespace().count() <= 1 {
@@ -180,6 +183,7 @@ fn recency_bonus(modified: u64) -> f64 {
     (1.0 / (1.0 + age_days / 365.0)).min(1.0)
 }
 
+// 结果里展示最相关的章节，而不是只显示整篇文档。
 fn best_section<'a>(document: &'a Document, terms: &[String]) -> &'a Section {
     document
         .sections

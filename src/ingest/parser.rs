@@ -6,6 +6,7 @@ use crate::model::{Document, Section};
 pub struct MarkdownParser;
 
 impl MarkdownParser {
+    // 解析单个文件，提取标题、标签、章节和正文。
     pub fn parse(&self, id: usize, path: &Path, content: String, modified: u64) -> Document {
         let file_name = file_name(path);
         let file_stem = file_stem(path, &file_name);
@@ -142,6 +143,7 @@ fn push_body_line(body: &mut String, line: &str) {
     body.push('\n');
 }
 
+// 遇到新标题时，把前一个章节收起来。
 fn push_section(sections: &mut Vec<Section>, heading: &str, level: u8, body: &str) {
     if body.trim().is_empty() && sections.is_empty() {
         return;
@@ -157,6 +159,7 @@ fn is_code_fence(line: &str) -> bool {
     line.starts_with("```") || line.starts_with("~~~")
 }
 
+// 只识别 "# Title" 这种标准 Markdown 标题。
 fn parse_heading(line: &str) -> Option<(u8, &str)> {
     let hashes = line
         .chars()
@@ -197,6 +200,7 @@ fn collect_metadata_line(line: &str, title: &mut String, tags: &mut Vec<String>)
     false
 }
 
+// front matter 里的 tags 可能是一行，也可能是列表。
 fn collect_front_matter_line(
     line: &str,
     title: &mut String,

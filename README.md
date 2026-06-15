@@ -67,22 +67,20 @@ examples/notes
 当前示例文档包括：
 
 ```text
-rust-ownership-cn.md        Rust 所有权与借用复习
-error-handling-cn.md        Rust 错误处理实践
-search-ranking-cn.md        本地知识库搜索排序策略
-project-report-cn.md        Rust 大作业实验报告要点
-markdown-tags-cn.md         Markdown 笔记标签规范
-demo-script-cn.txt          RustNoteSearch 演示脚本
-tui-usage-cn.md             TUI 交互界面使用说明
-module-architecture-cn.md   搜索系统模块架构说明
-cache-design-cn.md          本地索引缓存设计
-cli-usage-cn.md             命令行使用示例
-testing-quality-cn.md       测试与代码质量检查
-rust-traits-cn.md           Rust Trait 与泛型设计
+01_overview.md                  机器学习概述
+02_linear_models.md             线性模型
+03_neural_networks.md           神经网络
+04_deep_learning.md             深度学习
+05_support_vector_machine.md    支持向量机
+06_decision_tree.md             决策树
+07_bayesian_classifiers.md      贝叶斯分类器
+08_ensemble_learning.md         集成学习
+09_clustering.md                聚类
+10_dimensionality_reduction.md  降维与度量学习
+11_model_evaluation.md          模型评估与调参
 ```
 
-这些示例文档用于展示中文搜索、标签解析、章节命中、相关度排序、上下文片段和 TUI
-交互效果。
+这些示例文档用于展示中文搜索、章节命中、相关度排序、上下文片段和 TUI 交互效果。
 
 ## 如何运行
 
@@ -107,19 +105,19 @@ cargo run -- index examples\notes --cache target\demo-cache.jsonl
 从缓存中搜索：
 
 ```bash
-cargo run -- search 所有权 借用 --cache target\demo-cache.jsonl --limit 5
+cargo run -- search 支持向量机 核函数 --cache target\demo-cache.jsonl --limit 5
 ```
 
 扫描目录并立即搜索，同时刷新缓存：
 
 ```bash
-cargo run -- search 搜索 排序 --dir examples\notes --cache target\demo-cache.jsonl --limit 5
+cargo run -- search PCA 降维 --dir examples\notes --cache target\demo-cache.jsonl --limit 5
 ```
 
 输出 JSON 搜索结果：
 
 ```bash
-cargo run -- search 缓存 JSONL --cache target\demo-cache.jsonl --format json
+cargo run -- search 模型评估 交叉验证 --cache target\demo-cache.jsonl --format json
 ```
 
 启动 TUI 交互界面：
@@ -131,11 +129,11 @@ cargo run -- tui examples\notes --cache target\tui-cache.jsonl --limit 5
 TUI 中可以直接输入关键词并回车，例如：
 
 ```text
-所有权 借用
-搜索 排序
-模块 架构
-测试 clippy
-trait 泛型
+支持向量机 核函数
+Logistic 回归
+神经网络 反向传播
+PCA 降维
+模型评估 交叉验证
 ```
 
 TUI 支持的内部命令：
@@ -188,13 +186,13 @@ cargo run -- index examples\notes --cache target\demo-cache.jsonl
 5. 展示普通搜索：
 
 ```bash
-cargo run -- search 所有权 借用 --cache target\demo-cache.jsonl --limit 3
+cargo run -- search 支持向量机 核函数 --cache target\demo-cache.jsonl --limit 3
 ```
 
 6. 展示 JSON 输出：
 
 ```bash
-cargo run -- search 缓存 JSONL --cache target\demo-cache.jsonl --format json
+cargo run -- search 模型评估 交叉验证 --cache target\demo-cache.jsonl --format json
 ```
 
 7. 启动 TUI，并连续输入几个查询：
@@ -206,11 +204,11 @@ cargo run -- tui examples\notes --cache target\tui-cache.jsonl --limit 5
 推荐 TUI 查询：
 
 ```text
-所有权 借用
-搜索 排序
-模块 架构
-测试 clippy
-trait 泛型
+支持向量机 核函数
+Logistic 回归
+神经网络 反向传播
+PCA 降维
+模型评估 交叉验证
 ```
 
 演示重点：

@@ -8,6 +8,7 @@ use crate::model::{Document, Section};
 
 const CACHE_VERSION: u64 = 1;
 
+// 保存解析后的文档缓存，避免每次搜索都重新解析文件。
 pub fn save_cache(cache_path: &Path, root: &Path, documents: &[Document]) -> AppResult<()> {
     if let Some(parent) = cache_path
         .parent()
@@ -47,6 +48,7 @@ pub fn save_cache(cache_path: &Path, root: &Path, documents: &[Document]) -> App
         .map_err(|error| AppError::io("failed to flush cache", error))
 }
 
+// 读取缓存时顺便校验版本和记录类型。
 pub fn load_cache(cache_path: &Path) -> AppResult<Vec<Document>> {
     let file = File::open(cache_path).map_err(|error| {
         AppError::io(
@@ -275,6 +277,7 @@ enum JsonValue {
     Object(BTreeMap<String, JsonValue>),
 }
 
+// 只支持本项目缓存需要的 JSON 子集。
 struct JsonParser<'a> {
     input: &'a [u8],
     position: usize,

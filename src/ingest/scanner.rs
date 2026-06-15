@@ -7,6 +7,7 @@ use crate::model::Document;
 
 use super::MarkdownParser;
 
+// 扫描用户指定目录，返回可搜索的文档列表。
 pub fn scan_documents(root: &Path) -> AppResult<Vec<Document>> {
     if !root.exists() {
         return Err(AppError::Cli(format!(
@@ -39,6 +40,7 @@ pub fn scan_documents(root: &Path) -> AppResult<Vec<Document>> {
     Ok(documents)
 }
 
+// 递归收集 Markdown/TXT 文件，跳过常见工程目录。
 fn collect_supported_files(dir: &Path, files: &mut Vec<PathBuf>) -> AppResult<()> {
     let entries = fs::read_dir(dir)
         .map_err(|error| AppError::io(format!("failed to read {}", dir.display()), error))?;

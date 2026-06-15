@@ -6,6 +6,7 @@ pub trait Tokenizer {
 pub struct SimpleTokenizer;
 
 impl Tokenizer for SimpleTokenizer {
+    // 英文按单词切，中文连续片段生成短 n-gram。
     fn tokenize(&self, text: &str) -> Vec<String> {
         let mut tokens = Vec::new();
         let mut ascii = String::new();
@@ -36,6 +37,7 @@ fn flush_ascii(current: &mut String, tokens: &mut Vec<String>) {
     }
 }
 
+// 中文没有空格分词，这里用 2 到 4 字短语做一个简单近似。
 fn flush_non_ascii(current: &mut String, tokens: &mut Vec<String>) {
     if current.is_empty() {
         return;
